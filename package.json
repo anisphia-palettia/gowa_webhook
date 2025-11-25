@@ -10,8 +10,13 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@hono/zod-validator": "^0.7.5",
     "crypto": "^1.0.1",
     "hono": "^4.10.6",
-    "mongodb": "^7.0.0"
+    "mongodb": "^7.0.0",
+    "zod": "^4.1.13"
+  },
+  "scripts": {
+    "start:dev": "bun --watch src/server.ts"
   }
 }
