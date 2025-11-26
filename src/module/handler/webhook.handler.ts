@@ -2,9 +2,10 @@ import { HTTPException } from "hono/http-exception";
 import verifyWebhookSignature from "../../helper/verify_webhook_signature";
 import honoFactory from "../../lib/hono_factory";
 import type { Db } from "mongodb";
-import type { WebhookData } from "../../type/WebhookData";
 import envConfig from "../../config/env";
 import WebhookService from "../service/webhook.service";
+import type { Context } from "hono";
+import type { WebhookPayload } from "../../type/webhook.type";
 
 export default class WebhookHandler {
   public app;
@@ -20,7 +21,7 @@ export default class WebhookHandler {
     this.routes();
   }
 
-  private async verify(c: any): Promise<WebhookData> {
+  private async verify(c: Context): Promise<WebhookPayload> {
     const signature = c.req.header("x-hub-signature-256");
 
     if (!signature) {
@@ -38,15 +39,16 @@ export default class WebhookHandler {
       throw new HTTPException(400, { message: "Invalid signature" });
     }
 
-    return JSON.parse(payload) as WebhookData;
+    return JSON.parse(payload);
   }
 
   private routes() {
     this.app.post("/", async (c) => {
       const data = await this.verify(c);
 
-      console.log("Webhook received:", data);
-
+      if ("message" in data) {
+        await this.webhookService.insertMessage(data);
+      }
       return c.json({ message: "Webhook received" });
     });
   }

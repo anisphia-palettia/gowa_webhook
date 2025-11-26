@@ -1,5 +1,6 @@
 import { ConnectionCheckOutStartedEvent, type Db } from "mongodb";
 import MessageService from "./message.service";
+import type { WebhookPayload } from "../../type/webhook.type";
 
 export default class WebhookService {
   private messageService: MessageService;
@@ -8,10 +9,7 @@ export default class WebhookService {
     this.messageService = new MessageService(db);
   }
 
-  async handleMessage(data: any) {
-    if (data.message) {
-      console.log(data);
-      // return await this.messageService.create(data);
-    }
+  async insertMessage(data: WebhookPayload) {
+    return await this.messageService.insert(data);
   }
 }

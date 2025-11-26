@@ -6,7 +6,7 @@ export default class MessageService {
     this.collection = db.collection("messages");
   }
 
-  async create(data: any) {
+  async insert(data: any) {
     return this.collection.insertOne(data);
   }
 
