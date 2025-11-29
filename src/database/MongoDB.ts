@@ -24,7 +24,15 @@ export class MongoDB {
     }
     await this.client.connect();
     this.db = this.client.db();
-    console.log("MongoDB connected (singleton)");
+    console.log("MongoDB connected");
     return this.db;
+  }
+
+  async disconnect() {
+    if (this.client) {
+      await this.client.close();
+      this.db = null;
+      console.log("MongoDB disconnected");
+    }
   }
 }
