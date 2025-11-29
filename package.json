@@ -17,6 +17,7 @@
     "zod": "^4.1.13"
   },
   "scripts": {
-    "start:dev": "bun --watch src/server.ts"
+    "start:dev": "bun --watch src/server.ts",
+    "db:seed": "bun src/database/seed.ts"
   }
 }

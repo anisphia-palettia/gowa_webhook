@@ -2,7 +2,7 @@ import { Db } from "mongodb";
 import UserService from "../service/user.service";
 import honoFactory from "../../lib/hono_factory";
 import zodValidatorMiddleware from "../middleware/zod_validator";
-import { userSchema } from "../schema/user.schema";
+import { createUserSchema } from "../schema/user.schema";
 import api_response from "../../helper/api_response";
 
 export default class UserHandler {
@@ -17,11 +17,11 @@ export default class UserHandler {
     // CREATE USER
     this.app.post(
       "/",
-      zodValidatorMiddleware("json", userSchema.insert),
+      zodValidatorMiddleware("json", createUserSchema),
       async (c) => {
         const data = c.req.valid("json");
         const user = await this.userService.insert(data);
-        return api_response.successResponse(c, {
+        return api_response.success(c, {
           message: "User created successfully",
           data: user,
         });

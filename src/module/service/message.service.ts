@@ -6,11 +6,11 @@ export default class MessageService {
     this.collection = db.collection("messages");
   }
 
-  async insert(data: any) {
+  public async insert(data: any) {
     return this.collection.insertOne(data);
   }
 
-  async findByChatId(chatId: string) {
+  public async findByChatId(chatId: string) {
     return this.collection.find({ chat_id: chatId }).toArray();
   }
 }

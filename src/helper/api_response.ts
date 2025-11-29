@@ -9,7 +9,7 @@ interface ApiResponse<T = unknown> {
   token?: string;
 }
 
-const successResponse = <T>(
+const success = <T>(
   c: Context,
   {
     message,
@@ -33,12 +33,11 @@ const successResponse = <T>(
   return c.json(response, status);
 };
 
-const errorResponse = (
+const error = (
   c: Context,
   {
     message,
     error,
-    meta,
     status = 500,
   }: {
     message: string;
@@ -57,6 +56,6 @@ const errorResponse = (
 };
 
 export default {
-  successResponse,
-  errorResponse,
+  success,
+  error,
 };
