@@ -3,7 +3,7 @@ import { UserRole } from "../../model/user.model";
 
 export async function seedUsers() {
   const userCol = await UserCollection.getInstance();
-  await userCol.({
+  await userCol.upsert({
     name: "Admin",
     username: "admin",
     password: await Bun.password.hash("admin"),

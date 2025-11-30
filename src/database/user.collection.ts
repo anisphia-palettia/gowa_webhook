@@ -13,7 +13,7 @@ export class UserCollection extends MongoDB {
   static async getInstance(): Promise<UserCollection> {
     if (!UserCollection._instance) {
       UserCollection._instance = new UserCollection();
-      await UserCollection.connectBase();
+      await MongoDB.connectBase();
       UserCollection._instance.initCollection();
     }
     return UserCollection._instance;
@@ -23,7 +23,7 @@ export class UserCollection extends MongoDB {
     const db = this.getDb();
     this._collection = db.collection<UserDoc>("users");
     this._collection
-      .createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 })
+      .createIndex({ username: 1 }, { unique: true })
       .catch(console.error);
   }
 
@@ -38,13 +38,27 @@ export class UserCollection extends MongoDB {
     return this.collection.insertOne(doc);
   }
 
-  async findByUserId(id: string) {
+  async findById(id: string) {
     return this.collection.findOne({ _id: new ObjectId(id) });
   }
 
-  async deleteByUserId(sessionId: string) {
-    return this.collection.deleteOne({ sessionId });
+  async deleteById(id: string) {
+    return this.collection.deleteOne({ _id: new ObjectId(id) });
   }
 
-  async upsertById
+  async upsertById(id: string, doc: UserDoc) {
+    return this.collection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: doc },
+      { upsert: true },
+    );
+  }
+
+  async upsert(doc: UserDoc) {
+    return this.collection.updateOne(
+      { username: doc.username },
+      { $set: doc },
+      { upsert: true },
+    );
+  }
 }

@@ -21,7 +21,7 @@ export class MongoDB {
     return this._db;
   }
 
-  protected static async disconnectBase(): Promise<void> {
+  static async disconnectBase(): Promise<void> {
     if (this._client) {
       await this._client.close();
       this._db = null;

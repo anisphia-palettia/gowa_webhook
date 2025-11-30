@@ -1,17 +1,14 @@
-import { MongoDB } from "../database/MongoDB";
+import { MongoDB } from "../database/mongodb";
 import { seedUsers } from "../database/seed/user_seed";
 
 async function seed() {
-  const mongo = MongoDB.getInstance();
-  const db = await mongo.connect();
-
   try {
-    await seedUsers(db);
+    await seedUsers();
     console.log("Seeding selesai");
   } catch (err) {
     console.error("Error saat seeding:", err);
   } finally {
-    await mongo.disconnect();
+    await MongoDB.disconnectBase();
   }
 }
 
