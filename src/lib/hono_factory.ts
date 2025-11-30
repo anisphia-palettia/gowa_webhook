@@ -1,9 +1,9 @@
 import { createFactory } from "hono/factory";
-import type { JwtPayload } from "../type/jwt_payload.type";
 
 type Env = {
   Variables: {
-    payload: JwtPayload;
+    token: string;
+    role: string;
   };
 };
 

@@ -6,6 +6,7 @@ import type { EnvConfig } from "../../config/env";
 import envConfig from "../../config/env";
 import type { Db } from "mongodb";
 import type { LoginAuthInput } from "../schema/auth.schema";
+import { generateToken } from "../../helper/token";
 
 export default class AuthService {
   private userService: UserService;
@@ -15,7 +16,7 @@ export default class AuthService {
     this.env = envConfig();
   }
 
-  public async login({ username, password }: LoginAuthInput): Promise<string> {
+  public async login({ username, password }: LoginAuthInput) {
     const user = await this.userService.findByUsername(username);
 
     const isValid =
@@ -27,13 +28,8 @@ export default class AuthService {
       });
     }
 
-    const payload: JwtPayload = {
-      user: {
-        userId: user._id.toString(),
-        role: user.role,
-      },
-    };
-    const token = await sign(payload, this.env.jwt_secret);
+    const token = generateToken();
+
     return token;
   }
 }

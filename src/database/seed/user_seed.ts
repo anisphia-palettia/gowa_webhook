@@ -1,21 +1,14 @@
-import { Db, type WithoutId } from "mongodb";
-import { UserRole, type UserModel } from "../../model/user.model";
+import { UserCollection } from "../user.collection";
+import { UserRole } from "../../model/user.model";
 
-export async function seedUsers(db: Db) {
-  const hashedPassword = await Bun.password.hash("admin");
-
-  const adminUser: WithoutId<UserModel> = {
+export async function seedUsers() {
+  const userCol = await UserCollection.getInstance();
+  await userCol.({
     name: "Admin",
     username: "admin",
-    password: hashedPassword,
+    password: await Bun.password.hash("admin"),
     role: UserRole.admin,
-  };
-  await db
-    .collection<WithoutId<UserModel>>("users")
-    .updateOne(
-      { username: adminUser.username },
-      { $setOnInsert: adminUser },
-      { upsert: true },
-    );
+  });
+
   console.log("Admin user created successfully");
 }
