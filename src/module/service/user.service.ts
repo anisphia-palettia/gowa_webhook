@@ -1,13 +1,26 @@
-import type { Collection, Db, OptionalId, WithId } from "mongodb";
+import type { OptionalId } from "mongodb";
 import type { CreateUserInput } from "../schema/user.schema";
 import { HTTPException } from "hono/http-exception";
-import type { UserModel } from "../../model/user.model";
+import type { UserDoc } from "../../model/user.model";
+import { UserCollection } from "../../database/user.collection";
 
 export default class UserService {
-  private collection: Collection;
+  private static _instance: UserService;
 
-  constructor(db: Db) {
-    this.collection = db.collection("users");
+  private userCol!: UserCollection;
+
+  constructor() {}
+
+  static async getInstance() {
+    if (!this._instance) {
+      this._instance = new UserService();
+      await this._instance.initCollections();
+    }
+    return this._instance;
+  }
+
+  private async initCollections() {
+    this.userCol = await UserCollection.getInstance();
   }
 
   async insert(data: CreateUserInput) {
@@ -16,19 +29,21 @@ export default class UserService {
 
     const hashedPassword = await Bun.password.hash(data.password);
 
-    const newUser: OptionalId<UserModel> = {
+    const newUser: OptionalId<UserDoc> = {
       username: data.username,
       name: data.name,
       password: hashedPassword,
       role: data.role,
     };
 
-    const result = await this.collection.insertOne(newUser);
+    const result = await this.userCol.collection.insertOne(newUser);
     return result;
   }
 
   async findByUsername(username: string) {
-    const user = await this.collection.findOne<WithId<UserModel>>({ username });
+    const user = await this.userCol.collection.findOne({
+      username,
+    });
     return user;
   }
 }

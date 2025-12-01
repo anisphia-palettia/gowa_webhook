@@ -1,4 +1,3 @@
-import { ConnectionCheckOutStartedEvent, type Db } from "mongodb";
 import MessageService from "./message.service";
 import type { WebhookPayload } from "../../type/webhook.type";
 

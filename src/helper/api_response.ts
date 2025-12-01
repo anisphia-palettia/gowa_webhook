@@ -42,7 +42,6 @@ const error = (
   }: {
     message: string;
     error?: unknown;
-    meta?: Record<string, unknown>;
     status?: ContentfulStatusCode;
   },
 ) => {

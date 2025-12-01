@@ -1,4 +1,4 @@
-import { ObjectId, type Collection } from "mongodb";
+import { type Collection } from "mongodb";
 import { MongoDB } from "./mongodb";
 import type { UserDoc } from "../model/user.model";
 
@@ -11,10 +11,10 @@ export class UserCollection extends MongoDB {
   }
 
   static async getInstance(): Promise<UserCollection> {
-    if (!UserCollection._instance) {
-      UserCollection._instance = new UserCollection();
+    if (!this._instance) {
+      this._instance = new UserCollection();
       await MongoDB.connectBase();
-      UserCollection._instance.initCollection();
+      this._instance.initCollection();
     }
     return UserCollection._instance;
   }
@@ -32,33 +32,5 @@ export class UserCollection extends MongoDB {
       throw new Error("UserCollection not initialized");
     }
     return this._collection;
-  }
-
-  async create(doc: UserDoc) {
-    return this.collection.insertOne(doc);
-  }
-
-  async findById(id: string) {
-    return this.collection.findOne({ _id: new ObjectId(id) });
-  }
-
-  async deleteById(id: string) {
-    return this.collection.deleteOne({ _id: new ObjectId(id) });
-  }
-
-  async upsertById(id: string, doc: UserDoc) {
-    return this.collection.updateOne(
-      { _id: new ObjectId(id) },
-      { $set: doc },
-      { upsert: true },
-    );
-  }
-
-  async upsert(doc: UserDoc) {
-    return this.collection.updateOne(
-      { username: doc.username },
-      { $set: doc },
-      { upsert: true },
-    );
   }
 }
